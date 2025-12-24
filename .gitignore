@@ -140,3 +140,8 @@ vite.config.ts.timestamp-*
 
 # Prisma files
 **/generated/prisma
+
+# Python virtual environments
+venv/
+__pycache__/
+*.pyc

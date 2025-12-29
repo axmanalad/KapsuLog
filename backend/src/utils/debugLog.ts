@@ -1,5 +1,5 @@
 export class DebugLog {
-  static info(message: string, ...data: any) {
+  static info(message: string, ...data: unknown[]) {
     message = this.formatMessage(message);    
     console.log(`${new Date().toISOString()} [INFO] ${message}`);
     if (data.length > 0) {
@@ -14,7 +14,7 @@ export class DebugLog {
     console.warn(`${new Date().toISOString()} [WARN] ${message}`);
   }
 
-  static error(message: string, error?: any) {
+  static error(message: string, error?: unknown[]) {
     message = this.formatMessage(message);
     console.error(`${new Date().toISOString()} [ERROR] ${message}`);
     if (error) {
@@ -22,7 +22,7 @@ export class DebugLog {
     }
   }
 
-  static debug(message: string, data?: any) {
+  static debug(message: string, data?: unknown[]) {
     message = this.formatMessage(message);
     console.debug(`${new Date().toISOString()} [DEBUG] ${message}`);
     if (data) {

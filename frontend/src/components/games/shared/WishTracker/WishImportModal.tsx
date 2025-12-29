@@ -4,18 +4,21 @@ import type { WishImportInstructionsProps, WishImportResults } from '../../../..
 import StepCard from '../StepCard';
 import { importWishes } from '../../../../api/wishService';
 
-const WishImportModal: React.FC<WishImportInstructionsProps> = ({ isOpen, onClose, userGameId, gameName, onImportSuccess }) => {
+const WishImportModal: React.FC<WishImportInstructionsProps> = ({ isOpen, onClose, userGameId, gameName }) => {
   const [importUrl, setImportUrl] = useState('');
   const [step, setStep] = useState(1);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied'>('idle');
   const [isImportFailure, setIsImportFailure] = useState(false);
+  const [hasImported, setHasImported] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
 
   const [importResults, setImportResults] = useState<WishImportResults | null>(null);
 
   useEffect(() => {
     if (isOpen) {
+      setIsImporting(false);
+      setHasImported(false);
       document.body.classList.add('modal-open');
-
       return () => {
         document.body.classList.remove('modal-open');
       };
@@ -31,10 +34,13 @@ const WishImportModal: React.FC<WishImportInstructionsProps> = ({ isOpen, onClos
   const gameInstructions = getGameInstructions(gameName);
   const handleImport = async () => {
     try {
+      setIsImporting(true);
       const response = await importWishes(gameName, userGameId, importUrl);
+      setIsImporting(false);
       setIsImportFailure((Object.values(response.data).slice(0, 3)).every(val => val === 0));
       setImportResults(response.data);
       setStep(4);
+      setHasImported(true);
     } catch (err) {
       console.error('Import failed:', err);
     }
@@ -58,7 +64,10 @@ const WishImportModal: React.FC<WishImportInstructionsProps> = ({ isOpen, onClos
       <div className="modal-content wish-import-modal">
         <div className="modal-header">
           <h2>Import Wish History</h2>
-          <button type="button" onClick={onClose} className="modal-close">×</button>
+          <button type="button" onClick={() => { 
+            onClose(hasImported);
+            setStep(1);
+            }} className="modal-close" disabled={isImporting}>×</button>
         </div>
 
         <div className="modal-body">
@@ -174,7 +183,7 @@ const WishImportModal: React.FC<WishImportInstructionsProps> = ({ isOpen, onClos
                 <button 
                   type="button"
                   onClick={() => { void handleImport(); }}
-                  disabled={!importUrl.trim()}
+                  disabled={!importUrl.trim() || !importUrl.includes('https://public-operation-hk4e-sg.hoyoverse.com/gacha_info/api/getGachaLog')}
                   className="btn step-btn"
                 >
                   Import Wishes
@@ -223,10 +232,7 @@ const WishImportModal: React.FC<WishImportInstructionsProps> = ({ isOpen, onClos
                 <button 
                   type="button"
                   onClick={() => {
-                    if (onImportSuccess) {
-                      onImportSuccess(); // Refreshes the wishes and pity stats
-                    }
-                    onClose();
+                    onClose(hasImported);
                     setStep(1);
                   }}
                   className="btn step-btn"

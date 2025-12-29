@@ -123,9 +123,8 @@ export type PityStatsRecord = Record<gameName, PityCounter[]>;
 export interface WishImportInstructionsProps {
   userGameId: string;
   gameName: string;
-  onClose: () => void;
+  onClose: (isRefreshable: boolean) => void;
   isOpen: boolean;
-  onImportSuccess?: () => void;
 };
 
 export interface StepCardProps {

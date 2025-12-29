@@ -67,7 +67,7 @@
 }
 
 .wish-item-date {
-  @apply text-sm text-gray-500 dark:text-gray-400;
+  @apply text-sm text-gray-500 dark:text-gray-300;
 }
 
 .wish-item.compact {

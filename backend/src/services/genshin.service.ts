@@ -369,18 +369,30 @@ export class GenshinService {
    * @returns True if guaranteed, false otherwise.
    */
   private static async updateAllWishGuarantee(userGameId: string, banners: GenshinBanner[]) {
+
+    const standardItems = [
+      'Dehya', 'Diluc', 'Jean', 'Keqing', 'Mona', 'Qiqi', 
+      'Tighnari', 'Yumemizuki Mizuki', 'Aquila Favonia',
+      'Primordial Jade Winged-Spear','Wolf\'s Gravestone',
+      'Amos\' Bow', 'Lost Prayer to the Sacred Winds',
+      'Skyward Blade', 'Skyward Harp', 'Skyward Pride',
+      'Skyward Atlas', 'Skyward Spine'
+    ];
+
     for (const banner of banners) {
       const wishes = await prisma.wish.findMany({
         where: { userGameId, bannerId: banner.id },
         orderBy: { wishNumber: 'asc' }
       });
 
+      let guaranteeActive = false;
       for (const wish of wishes) {
-        let guaranteed = false;
         // Guarantees do not apply to non-5-star wishes
         if (wish.rarity !== '5') {
           continue;
         }
+
+        let guaranteed = false;
         // Retrieve the last five star wish in the same banner.
         const lastFiveStar = await prisma.wish.findFirst({
           where: {
@@ -390,22 +402,24 @@ export class GenshinService {
             wishNumber: { lt: wish.wishNumber }
           },
         });
-
-        const standardItems = [
-          'Dehya', 'Diluc', 'Jean', 'Keqing', 'Mona', 'Qiqi', 
-          'Tighnari', 'Yumemizuki Mizuki', 'Aquila Favonia',
-          'Primordial Jade Winged-Spear','Wolf\'s Gravestone',
-          'Amos\' Bow', 'Lost Prayer to the Sacred Winds',
-          'Skyward Blade', 'Skyward Harp', 'Skyward Pride',
-          'Skyward Atlas', 'Skyward Spine'
-        ];
-        // If there is no last five star wish (current wish is the first five star), assume the current wish is not guaranteed.
+        // If there is no last five star wish (current wish is the first five star), assume the current wish is not guranteed, but set guaranteeActive if it is a standard item.
         if (!lastFiveStar) {
-          guaranteed = false;
+          if (banner.type !== 'STANDARD' && !wish.isWin && standardItems.includes(wish.name)) {
+            guaranteeActive = true;
+          }
         } else {
           // Determine if the current wish is guaranteed based on the last five star wish
           // Note: Guarantees do not apply to standard banners
-          guaranteed = lastFiveStar.isWin === false && standardItems.includes(lastFiveStar.name) && banner.type !== 'STANDARD';
+          if (banner.type === 'STANDARD') {
+            guaranteed = false;
+          } else if (guaranteeActive) {
+            guaranteed = true;
+            guaranteeActive = false; // Reset guarantee after use
+          } else {
+            if (!wish.isWin && standardItems.includes(wish.name)) {
+              guaranteeActive = true;
+            }
+          }
         }
         await prisma.wish.update({
           where: { id: wish.id },

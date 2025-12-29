@@ -40,7 +40,7 @@ const WishItem: React.FC<WishItemProps> = ({ wish, compact = false, gameName }) 
       <div className="wish-item-info">
         <div className={`wish-item-rarity rarity-${String(wish.rarity)}`}></div>
         {wish.itemType === 'Character' && (
-          <img src={getWishIcon(wish, gameName)} className="wish-item-image"/>
+          <img src={getWishIcon(wish, gameName)} alt='' className="wish-item-image"/>
         )}
         <div className={"wish-details"}>
           <div className="flex flex-row gap-2 items-center">
@@ -63,7 +63,7 @@ const WishItem: React.FC<WishItemProps> = ({ wish, compact = false, gameName }) 
         </div>
       </div>
       {wish.itemType === 'Character' && (
-        <img src={getWishArt(wish, gameName)} className="wish-item-art"/>
+        <img src={getWishArt(wish, gameName)} alt='' className="wish-item-art"/>
       )}
       <div className="wish-item-date">{convertDate(new Date(wish.time))}</div>
     </div>

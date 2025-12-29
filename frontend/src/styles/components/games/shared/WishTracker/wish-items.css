@@ -37,13 +37,13 @@
 }
 
 .wish-item-art {
-  @apply absolute w-80 top-14 opacity-50 overflow-hidden object-cover flex-shrink-0 pointer-events-none z-0;
+  @apply absolute w-80 top-14 opacity-30 overflow-hidden object-cover flex-shrink-0 pointer-events-none z-0;
   left: 50%;
   transform: translate(-10%, -50%);
 }
 
 .wish-item-number, .wish-item-gacha-type, .wish-item-type, .wish-item-date {
-  @apply relative text-sm text-gray-500 dark:text-gray-400 z-10;
+  @apply relative text-sm text-gray-500 dark:text-gray-300 z-10;
 }
 
 .wish-item-pity {

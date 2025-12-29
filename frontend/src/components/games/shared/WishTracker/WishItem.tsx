@@ -19,10 +19,29 @@ const WishItem: React.FC<WishItemProps> = ({ wish, compact = false, gameName }) 
 
   const [wlClass, wlText] = getWLGuaranteeClass(wish.isWin ?? false, wish.isGuaranteed ?? false);
 
+  const getWishIcon = (wish: WishItemProps['wish'], gameName: string | undefined): string => {
+    const name = wish.name.replace(/ /g, '_');
+
+    const basePath = `${gameName?.toLowerCase()}/characters/icons/${encodeURIComponent(name)}_Icon.webp`;
+
+    return `https://cdn.kapsulog.com/${basePath}`;
+  };
+
+  const getWishArt = (wish: WishItemProps['wish'], gameName: string | undefined): string => {
+    const name = wish.name.replace(/ /g, '_');
+
+    const basePath = `${gameName?.toLowerCase()}/characters/splash-art/${encodeURIComponent(name)}_Wish.webp`;
+
+    return `https://cdn.kapsulog.com/${basePath}`;
+  };
+
   return (
     <div className={`wish-item ${compact ? 'compact' : 'detailed'}`}>
       <div className="wish-item-info">
         <div className={`wish-item-rarity rarity-${String(wish.rarity)}`}></div>
+        {wish.itemType === 'Character' && (
+          <img src={getWishIcon(wish, gameName)} className="wish-item-image"/>
+        )}
         <div className={"wish-details"}>
           <div className="flex flex-row gap-2 items-center">
             <div className="wish-item-name">{wish.name}</div>
@@ -43,6 +62,9 @@ const WishItem: React.FC<WishItemProps> = ({ wish, compact = false, gameName }) 
           </div>
         </div>
       </div>
+      {wish.itemType === 'Character' && (
+        <img src={getWishArt(wish, gameName)} className="wish-item-art"/>
+      )}
       <div className="wish-item-date">{convertDate(new Date(wish.time))}</div>
     </div>
   );

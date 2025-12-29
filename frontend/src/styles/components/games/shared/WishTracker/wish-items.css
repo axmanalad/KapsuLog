@@ -3,8 +3,9 @@
 
 .wish-item {
   @apply flex items-center justify-between;
-  @apply p-4 bg-gray-50 dark:bg-gray-700 rounded-lg;
+  @apply p-4 bg-gray-50 dark:bg-gray-700 rounded-lg max-h-16;
   @apply border border-gray-200 dark:border-gray-600;
+  @apply overflow-hidden relative;
 }
 
 .wish-item-info {
@@ -31,8 +32,18 @@
   @apply font-semibold text-gray-800 dark:text-gray-200;
 }
 
+.wish-item-image {
+  @apply w-14 h-14 overflow-hidden flex-shrink-0 flex items-center justify-center;
+}
+
+.wish-item-art {
+  @apply absolute w-80 top-14 opacity-50 overflow-hidden object-cover flex-shrink-0 pointer-events-none z-0;
+  left: 50%;
+  transform: translate(-10%, -50%);
+}
+
 .wish-item-number, .wish-item-gacha-type, .wish-item-type, .wish-item-date {
-  @apply text-sm text-gray-500 dark:text-gray-400;
+  @apply relative text-sm text-gray-500 dark:text-gray-400 z-10;
 }
 
 .wish-item-pity {

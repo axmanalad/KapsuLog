@@ -1,12 +1,12 @@
 export function convertDate(date: Date): string  {
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
-    month: 'long',
+    month: 'numeric',
     day: 'numeric',
     hour: 'numeric',
     minute: 'numeric',
-    second: 'numeric',
-    hour12: true,
+    //second: 'numeric',
+    hour12: false,
     // Localize timezone to user's timezone
     timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, 
   };
@@ -17,7 +17,7 @@ export function convertDate(date: Date): string  {
 export function convertDateWithoutTime(date: Date): string {
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
-    month: 'long',
+    month: 'numeric',
     day: 'numeric',
   };
 

@@ -140,16 +140,16 @@ Write-Host "Your import URL:" -ForegroundColor Cyan
 Write-Host $wishHistoryUrl -ForegroundColor White # Convert to a word hyperlink
 Write-Host ""
 Write-Host "   IMPORTANT: This URL contains your authentication key." -ForegroundColor Red
-Write-Host "   Only paste it into trusted applications like MaiPon." -ForegroundColor Red
+Write-Host "   Only paste it into trusted applications like KapsuLog." -ForegroundColor Red
 Write-Host ""
 Write-Host "   Instructions:" -ForegroundColor Yellow
 Write-Host "   1. Copy the URL above"
-Write-Host "   2. Return to MaiPon"
+Write-Host "   2. Return to KapsuLog"
 Write-Host "   3. Paste the URL in the import dialog"
 Write-Host "   4. Click 'Import Wishes'"
 Write-Host ""
 Write-Host "   Your wish history URL has been copied to the clipboard." -ForegroundColor Yellow
-Write-Host "   You can paste it directly into MaiPon." -ForegroundColor Yellow
+Write-Host "   You can paste it directly into KapsuLog." -ForegroundColor Yellow
 Write-Host ""
 Write-Host "Script completed successfully!" -ForegroundColor Green
 

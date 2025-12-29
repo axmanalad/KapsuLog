@@ -88,7 +88,7 @@ const RegisterPage: React.FC = () => {
   return (
     <div className="auth-page">
       <div className="auth-container">
-        <h2 className="auth-header">Register to MaiPon</h2>
+        <h2 className="auth-header">Register to KapsuLog</h2>
         <AuthForm<RegisterFormData>
           formData={formData}
           handleChange={handleChange}

@@ -77,7 +77,7 @@ const LoginPage: React.FC = () => {
   return (
     <div className="auth-page">
       <div className="auth-container">
-        <h2 className="auth-header">Login to MaiPon</h2>
+        <h2 className="auth-header">Login to KapsuLog</h2>
         <AuthForm<BaseAuthFormData>
           formData={formData}
           handleChange={handleChange}

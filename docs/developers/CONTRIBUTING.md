@@ -24,7 +24,7 @@ There are useful extensions in Visual Studio Code that are very useful for devel
     ```
 
 ### Setting up Database
-To set up the PostgreSQL database locally, you will need to configure your PG Admin 4 first. Afterwards, create a database for MaiPon and set up the environment variables with the following:
+To set up the PostgreSQL database locally, you will need to configure your PG Admin 4 first. Afterwards, create a database for KapsuLog and set up the environment variables with the following:
 
 In frontend directory:
 - `REACT_APP_API_URL`: The link to the hosted backend (i.e. `http://localhost:3000`)
@@ -38,7 +38,7 @@ Format: "postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
 ```
 
 ### Backend Setup with Prisma
-MaiPon uses Prisma ORM to utilize relational models easier as objects instead of entering SQL queries. The following steps will setup your local database by using the schema and seed provided.
+KapsuLog uses Prisma ORM to utilize relational models easier as objects instead of entering SQL queries. The following steps will setup your local database by using the schema and seed provided.
 
 1. Generate the Prisma Client.
     ```bash
@@ -69,7 +69,7 @@ MaiPon uses Prisma ORM to utilize relational models easier as objects instead of
     ```
 3. To stop the server, enter `q` or `CTRL-C`.
 
-## MaiPon Project Details
+## KapsuLog Project Details
 The following details are utilized/currently planned tech stack and deployment for this project:
 
 ### Tech Stack

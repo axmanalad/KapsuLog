@@ -58,7 +58,6 @@ const WishImportModal: React.FC<WishImportInstructionsProps> = ({ isOpen, onClos
     }
   };
 
-  // TODO: Fix styling for last step
   return (
     <div className="modal-overlay">
       <div className="modal-content wish-import-modal">

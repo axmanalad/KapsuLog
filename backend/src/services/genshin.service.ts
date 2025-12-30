@@ -42,17 +42,6 @@ interface GenshinWish extends WishItem {
   lang: string;
 }
 
-interface GenshinWishStats {
-  totalWishes: number;
-  fiveStarWLRatio: number[];
-  avgFiveStarPity: number;
-  avgFourStarPity: number;
-  currentWinStreak: number;
-  currentLossStreak: number;
-  longestWinStreak: number;
-  longestLossStreak: number;
-}
-
 interface GenshinPityCounters {
   userGameId: string;
   gachaType: string;
@@ -530,85 +519,6 @@ export class GenshinService {
       where: { userGameId },
       orderBy: { time: 'desc' }
     });
-  }
-
-  /**
-   * Gets the user wish stats for a specific banner
-   * @param userGameId The ID of the user's game
-   * @returns The user's wish stats
-   */
-  static async getUserWishStats(userGameId: string, bannerId: string): Promise<GenshinWishStats> {
-    const stats = await prisma.userWishStats.findUnique({
-      where: { userGameId_bannerId: { userGameId, bannerId } },
-    });
-    if (!stats) {
-      return {
-        totalWishes: 0,
-        fiveStarWLRatio: [0, 0, 0],
-        avgFiveStarPity: 0,
-        avgFourStarPity: 0,
-        currentWinStreak: 0,
-        currentLossStreak: 0,
-        longestWinStreak: 0,
-        longestLossStreak: 0
-      };
-    }
-    return stats as GenshinWishStats;
-  }
-
-  /**
-   * Gets the user wish stats of all banners in the game
-   * @param userGameId The ID of the user's game
-   * @returns The combined user wish stats
-   */
-  static async getCombinedUserWishStats(userGameId: string): Promise<GenshinWishStats> {
-    const banners = await prisma.banner.findMany();
-    const stats = await Promise.all(banners.map(banner => this.getUserWishStats(userGameId, banner.id)));
-    // Initialize combined stats after fetching all individual stats
-    const combined: GenshinWishStats = {
-      totalWishes: 0,
-      fiveStarWLRatio: [0, 0, 0],
-      avgFiveStarPity: 0,
-      avgFourStarPity: 0,
-      currentWinStreak: 0,
-      currentLossStreak: 0,
-      longestWinStreak: 0,
-      longestLossStreak: 0
-    };
-
-    // Calculate combined stats
-    return this.calculateCombinedStats(combined, stats);
-  }
-
-  /**
-   * Calculates the combined wish stats from individual banner stats
-   * @param res The initial result object to accumulate stats into
-   * @param statsArr The array of individual banner stats to combine
-   * @returns The combined wish stats
-   */
-  private static calculateCombinedStats(res: GenshinWishStats, statsArr: GenshinWishStats[]): GenshinWishStats {
-    let totalFiveStarPity = 0;
-    let totalFourStarPity = 0;
-    let totalFiveStarCount = 0;
-
-    // Aggregate stats
-    for (const stat of statsArr) {
-      res.totalWishes += stat.totalWishes;
-      res.fiveStarWLRatio = res.fiveStarWLRatio.map((v, i) => v + stat.fiveStarWLRatio[i]);
-      res.longestWinStreak = Math.max(res.longestWinStreak, stat.longestWinStreak);
-      res.longestLossStreak = Math.max(res.longestLossStreak, stat.longestLossStreak);
-      res.currentWinStreak += stat.currentWinStreak;
-      res.currentLossStreak += stat.currentLossStreak;
-      totalFiveStarPity += stat.avgFiveStarPity;
-      totalFourStarPity += stat.avgFourStarPity;
-      totalFiveStarCount += stat.fiveStarWLRatio[0] + stat.fiveStarWLRatio[1];
-    }
-    // Calculate averages
-    res.fiveStarWLRatio[2] = parseFloat(((res.fiveStarWLRatio[0] / totalFiveStarCount) * 100).toFixed(2)) || 0;
-    res.avgFiveStarPity = parseFloat((totalFiveStarPity / statsArr.length).toFixed(2)) || 0;
-    res.avgFourStarPity = parseFloat((totalFourStarPity / statsArr.length).toFixed(2)) || 0;
-
-    return res;
   }
 
   static async getUserPityCounters(userGameId: string) {

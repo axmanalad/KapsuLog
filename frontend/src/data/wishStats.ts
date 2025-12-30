@@ -1,4 +1,4 @@
-import type { PityStatsRecord, WishBannerRecord, WishCostRecord, WishImportRecord, WishStatsRecord } from "../types";
+import type { BannerFilterType, PityStatsRecord, WishBannerRecord, WishCostRecord, WishImportRecord, WishStatsRecord } from "../types";
 
 export const pityStats: PityStatsRecord = {
   // The stats (current, max, and guaranteed) are placeholders
@@ -257,7 +257,7 @@ export const wishBannerTypes: WishBannerRecord = {
   // Needs verification
   'honkai-star-rail': {
     '301': 'Character',
-    '302': 'Lightcone',
+    '302': 'Weapon',
     '200': 'Standard'
   },
   // Needs verification
@@ -266,4 +266,15 @@ export const wishBannerTypes: WishBannerRecord = {
     '302': 'Weapon',
     '200': 'Standard'
   }
+};
+
+export const bannerNameToIdsMap: Record<string, Record<BannerFilterType, string[]>> = {
+  'genshin-impact': {
+    Character: ['301', '400'],
+    Weapon: ['302'],
+    Chronicled: ['500'],
+    Standard: ['200'],
+    All: []
+  },
+  // ...other games
 };

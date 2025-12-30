@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { GenshinService } from "../services/genshin.service";
-import { PityCounters, WishItem, WishStats } from "../../../shared/types";
+import { PityCounters, WishItem } from "../../../shared/types";
 
 export const importWishes = async (req: Request, res: Response) => {
   try {
@@ -70,43 +70,6 @@ export const getUserWishes = async (req: Request, res: Response) => {
     });
   }
 };
-
-export const getUserWishStats = async (req: Request, res: Response) => {
-  try {
-    const { userGameId } = req.params;
-    const { bannerId } = req.query as { bannerId?: string };
-    let stats: WishStats;
-    if (bannerId) {
-      if (req.baseUrl.includes('genshin-impact')) {
-        stats = await GenshinService.getUserWishStats(userGameId, bannerId);
-      } else {
-        res.status(400).json({
-          success: false,
-          message: 'Invalid game specified'
-        });
-      }
-    } else {
-      if (req.baseUrl.includes('genshin-impact')) {
-        stats = await GenshinService.getCombinedUserWishStats(userGameId);
-      } else {
-        return res.status(400).json({
-          success: false,
-          message: 'Invalid game specified'
-        });
-      }
-    }
-    res.json({
-      success: true,
-      data: stats
-    });
-  } catch (err) {
-    console.error('Error fetching user wish stats:', err);
-    res.status(500).json({
-      success: false,
-      message: err instanceof Error ? err.message : 'Failed to fetch user wish stats'
-    });
-  }
-}
 
 export const getUserPityStats = async (req: Request, res: Response) => {
   try {

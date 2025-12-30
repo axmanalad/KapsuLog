@@ -14,7 +14,7 @@ export class DebugLog {
     console.warn(`${new Date().toISOString()} [WARN] ${message}`);
   }
 
-  static error(message: string, error?: unknown[]) {
+  static error(message: string, error?: unknown) {
     message = this.formatMessage(message);
     console.error(`${new Date().toISOString()} [ERROR] ${message}`);
     if (error) {

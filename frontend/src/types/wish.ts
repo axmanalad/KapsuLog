@@ -37,7 +37,7 @@ export interface WishStatLabels {
 export interface WishStatsProps {
   gameId: string;
   gameName: string;
-  bannerId: string;
+  bannerIds: string[];
   wishes: WishItem[];
   selectedBanner?: string;
   isFiltered?: boolean;
@@ -140,7 +140,7 @@ export interface WishImportResults {
   banners: Record<string, number>;
 };
 
-export type WishBannerProps = Record<string, string>;
+export type WishBannerProps = Record<string, BannerFilterType>;
 
 /* Wishes will associate with the following format to identify their origin:
 gameName: { gachaType: string, bannerName: string }

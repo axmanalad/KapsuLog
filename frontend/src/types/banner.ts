@@ -1,5 +1,3 @@
-export type BannerFilterType = 'ALL' | 'CHARACTER' | 'WEAPON' | 'CHRONICLED' | 'STANDARD';
+export type BannerFilterType = 'All' | 'Character' | 'Weapon' | 'Chronicled' | 'Standard';
 
-export type BannerTypeMapping = Record<string, BannerFilterType>;
-
-export type BannerNames = Record<BannerFilterType, string>;
+export type BannerTypeMapping = Record<BannerFilterType, string>;

@@ -1,56 +1,41 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { WishItem } from "../../../shared/types";
 import type { BannerFilterType } from "../types";
-import { getBannerFilter, getFilteredWishesByBanner } from "../utils/bannerUtils";
+// import { getFilteredWishesByBanner } from "../utils/bannerUtils";
+import { bannerNameToIdsMap } from "../data/wishStats";
 
-export const useBannerFilter = (wishes: WishItem[]) => {
-  const [selectedBanner, setSelectedBanner] = useState<BannerFilterType>('ALL');
-  const [bannerId, setBannerId] = useState<string>('');
-  const [pendingBannerFilter, setPendingBannerFilter] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+export const useBannerFilter = (wishes: WishItem[], gameName: string) => {
+  const [selectedBanner, setSelectedBanner] = useState<BannerFilterType>('All');
 
-  useEffect(() => {
-    if (pendingBannerFilter && bannerId) {
-      setSelectedBanner(getBannerFilter(pendingBannerFilter));
-      setPendingBannerFilter(null);
-      setIsLoading(false);
-    }
-  }, [pendingBannerFilter, bannerId]);
+  const bannerIds = useMemo(() => {
+    if (selectedBanner === 'All') return [];
+    return bannerNameToIdsMap[gameName]?.[selectedBanner] ?? []
+  }, [selectedBanner, gameName]);
 
   const filteredWishes = useMemo(() => {
-    if (selectedBanner === 'ALL') {
+    if (selectedBanner === 'All') {
       return wishes;
     }
-    
-    // Only filter if we have a bannerId
-    if (bannerId) {
-      return getFilteredWishesByBanner(wishes, selectedBanner, bannerId);
+    if (bannerIds.length > 0) {
+      return wishes.filter(wish => bannerIds.includes(wish.gachaType));
     }
-    
-    // Return all wishes while waiting for bannerId
+    // // Only filter if we have a bannerId
+    // if (bannerId) {
+    //   return getFilteredWishesByBanner(wishes, selectedBanner, bannerId);
+    // }
     return wishes;
-  }, [wishes, selectedBanner, bannerId]);
+  }, [wishes, selectedBanner, bannerIds]);
 
   // Sets the selected banner dependent on pending
-  const handlePityCardClick = (banner: string) => {
-    if (banner === 'ALL') {
-      setSelectedBanner('ALL');
-      setBannerId('');
-      setPendingBannerFilter(null);
-    } else {
-      setIsLoading(true);
-      setBannerId('');
-      setPendingBannerFilter(banner);
-    }
+  const handlePityCardClick = (banner: BannerFilterType) => {
+    setSelectedBanner(banner);
   };
 
   const clearBannerFilter = () => {
-    setSelectedBanner('ALL');
-    setBannerId('');
-    setPendingBannerFilter(null);
+    setSelectedBanner('All');
   };
 
-  const isFiltered = selectedBanner !== 'ALL';
+  const isFiltered = selectedBanner !== 'All';
 
   return {
     selectedBanner,
@@ -58,9 +43,6 @@ export const useBannerFilter = (wishes: WishItem[]) => {
     handlePityCardClick,
     clearBannerFilter,
     isFiltered,
-    bannerId,
-    setBannerId,
-    isLoading,
-    hasPendingFilter: !!pendingBannerFilter
+    bannerIds
   };
 };

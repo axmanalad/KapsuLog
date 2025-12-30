@@ -28,6 +28,51 @@ export function calculateWishStats<T extends WishItem>(
 }
 
 /**
+ * Combines stats from multiple banners, similar to backend logic.
+ */
+export function calculateCombinedStats(statsArr: WishStatLabels[]): WishStatLabels {
+  let totalWishes = 0;
+  let fiveStarWLRatio: [number, number, number] = [0, 0, 0];
+  let avgFiveStarPity = 0;
+  let avgFourStarPity = 0;
+  let currentWinStreak = 0;
+  let currentLossStreak = 0;
+  let longestWinStreak = 0;
+  let longestLossStreak = 0;
+  let totalFiveStarPity = 0;
+  let totalFourStarPity = 0;
+  let totalFiveStarCount = 0;
+
+  for (const stat of statsArr) {
+    totalWishes += stat.totalWishes;
+    fiveStarWLRatio = fiveStarWLRatio.map((v, i) => v + stat.fiveStarWLRatio[i]) as [number, number, number];
+    longestWinStreak = Math.max(longestWinStreak, stat.longestWinStreak);
+    longestLossStreak = Math.max(longestLossStreak, stat.longestLossStreak);
+    currentWinStreak += stat.currentWinStreak;
+    currentLossStreak += stat.currentLossStreak;
+    totalFiveStarPity += stat.avgFiveStarPity;
+    totalFourStarPity += stat.avgFourStarPity;
+    totalFiveStarCount += stat.fiveStarWLRatio[0] + stat.fiveStarWLRatio[1];
+  }
+
+  // Calculate averages
+  fiveStarWLRatio[2] = totalFiveStarCount > 0 ? parseFloat(((fiveStarWLRatio[0] / totalFiveStarCount) * 100).toFixed(2)) : 0;
+  avgFiveStarPity = statsArr.length > 0 ? parseFloat((totalFiveStarPity / statsArr.length).toFixed(2)) : 0;
+  avgFourStarPity = statsArr.length > 0 ? parseFloat((totalFourStarPity / statsArr.length).toFixed(2)) : 0;
+
+  return {
+    totalWishes,
+    fiveStarWLRatio,
+    avgFiveStarPity,
+    avgFourStarPity,
+    currentWinStreak,
+    currentLossStreak,
+    longestWinStreak,
+    longestLossStreak,
+  };
+}
+
+/**
  * Calculates the average pity count from a list of wishes.
  * @param wishes The list of wishes to calculate the average pity from
  * @returns The average pity count
@@ -49,7 +94,7 @@ function avgPity<T extends WishItem>(wishes: T[], type: '5' | '4'): number {
     const nextWish = wishes[i + 1];
 
     if (currentWish.rarity === '4' && nextWish.rarity === '4') {
-      totalPity += nextWish.wishNumber - currentWish.wishNumber;
+      totalPity += currentWish.wishNumber - nextWish.wishNumber;
       count++;
     }
   }

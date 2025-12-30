@@ -1,6 +1,6 @@
 import type React from "react";
 import type { WishItem } from "../../../../../../shared/types";
-import type { WishTrackerProps, WishView } from "../../../../types";
+import type { BannerFilterType, WishTrackerProps, WishView } from "../../../../types";
 import { useEffect, useState } from "react";
 import "../../../../styles/components/games/shared/WishTracker/index.css";
 import PityCard from "./PityCard";
@@ -11,7 +11,7 @@ import WishHeader from "./WishHeader";
 import { useBannerFilter } from "../../../../hooks/useBannerFilter";
 import WishStatistics from "./WishStatistics";
 import { getUserPityStats, getUserWishes } from "../../../../api/wishService";
-import { getBannerId, getGameIdByUGID } from "../../../../api/gameService";
+// import { getBannerId, getGameIdByUGID } from "../../../../api/gameService";
 
 const WishTracker: React.FC<WishTrackerProps> = ({ gameName, userGameId }) => {
   const [wishes, setWishes] = useState<WishItem[]>([]);
@@ -55,33 +55,11 @@ const WishTracker: React.FC<WishTrackerProps> = ({ gameName, userGameId }) => {
     handlePityCardClick,
     clearBannerFilter,
     isFiltered,
-    bannerId,
-    setBannerId,
-    isLoading: filterLoading,
-    hasPendingFilter
-  } = useBannerFilter(wishes);
+    bannerIds,
+  } = useBannerFilter(wishes, gameName);
 
-  const handleBannerId = async (userGameId: string, selectedBanner: string) => {
-    try {
-      const gameId = await getGameIdByUGID(userGameId);
-      if (!gameId) return null;
-      const id = await getBannerId(gameId, selectedBanner);
-      if (!id) return null;
-      setBannerId(id);
-      return id;
-    } catch (err) {
-      console.error('Unable to fetch banner ID:', err);
-      return null;
-    }
-  };
-
-  const handlePityCardClickWrapper = (banner: string) => {
+  const handlePityCardClickWrapper = (banner: BannerFilterType) => {
     handlePityCardClick(banner);
-    
-    // If it's not ALL, fetch the banner ID
-    if (banner !== 'ALL') {
-      void handleBannerId(userGameId, banner);
-    }
   };
 
   const refreshWishes = async () => {
@@ -149,9 +127,8 @@ const WishTracker: React.FC<WishTrackerProps> = ({ gameName, userGameId }) => {
               key={`stat.${stat.gachaType.toLowerCase()}-${String(userGameId)}`}
               {...stat}
               gachaType={normalizeBannerType}
-              onClick={() => { if (!isSelected) handlePityCardClickWrapper(bannerType); }}
+              onClick={() => { if (!isSelected) handlePityCardClickWrapper(normalizeBannerType as BannerFilterType); }}
               isSelected={isSelected}
-              isLoading={isSelected && filterLoading}
             />
           );
         })}
@@ -160,11 +137,10 @@ const WishTracker: React.FC<WishTrackerProps> = ({ gameName, userGameId }) => {
       <WishStatistics
         gameName={gameName}
         gameId={userGameId}
-        bannerId={isFiltered ? bannerId : ''}
+        bannerIds={isFiltered ? bannerIds : []}
         wishes={isFiltered ? filteredWishes : wishes}
         selectedBanner={selectedBanner}
         isFiltered={isFiltered}
-        isLoading={filterLoading || hasPendingFilter}
       />
 
       {renderWishHistory()}

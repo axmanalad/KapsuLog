@@ -4,12 +4,13 @@ import { useState, useEffect } from "react";
 import { wishCostData, wishStats } from "../../../../data/wishStats";
 import WishStatCard from "./WishStatCard";
 import "../../../../styles/components/games/shared/WishTracker/wish-statistics.css";
-import { getCombinedUserWishStats, getUserBannerStats } from "../../../../api/wishService";
+import { calculateCombinedStats, calculateWishStats } from "../../../../utils/wishStatCalculation";
+import type { WishItem } from "../../../../../../shared/types";
 
 const WishStatistics: React.FC<WishStatsProps> = ({
   gameId,
   gameName,
-  bannerId,
+  bannerIds,
   wishes,
   selectedBanner,
   isFiltered = false,
@@ -19,81 +20,85 @@ const WishStatistics: React.FC<WishStatsProps> = ({
   const [statistics, setStatistics] = useState<WishStatsData[]>();
 
   useEffect(() => {
-    
     // If external loading is true, wait for it to complete
     if (externalLoading) {
       setIsLoading(true);
       return;
     }
+
+    if (wishes.length === 0) {
+      setStatistics([]);
+      setIsLoading(false);
+      return;
+    }
+
+    // If isFiltered is true but bannerId is empty, we're still loading the banner ID
+    if (isFiltered && !bannerIds) {
+      setIsLoading(true);
+      return;
+    }
+
+    setIsLoading(true);
     
-    const fetchStats = async () => {
-      if (wishes.length === 0) {
-        setStatistics([]);
-        setIsLoading(false);
-        return;
-      }
+    let filtered = wishes;
+    let calculatedStats;
+    if (isFiltered && selectedBanner != 'All') {
+      filtered = wishes.filter(wish => bannerIds.includes(wish.gachaType));
+      const fiveStarWishes = filtered.filter(wish => wish.rarity === '5');
+      const fourStarWishes = filtered.filter(wish => wish.rarity === '4');
+      calculatedStats = calculateWishStats(filtered, fiveStarWishes, fourStarWishes)
+    } else {
+      const wishesByBanner = wishes.reduce((acc, wish) => {
+        if (!acc[wish.bannerId]) acc[wish.bannerId] = [];
+        acc[wish.bannerId].push(wish);
+        return acc;
+      }, {} as Record<string, WishItem[]>);
 
-      // If isFiltered is true but bannerId is empty, we're still loading the banner ID
-      if (isFiltered && !bannerId) {
-        setIsLoading(true);
-        return;
-      }
+      const statsArr = Object.values(wishesByBanner).map(bannerWishes => {
+        const fiveStarWishes = bannerWishes.filter(wish => wish.rarity === '5');
+        const fourStarWishes = bannerWishes.filter(wish => wish.rarity === '4');
+        return calculateWishStats(bannerWishes, fiveStarWishes, fourStarWishes);
+      });
 
-      try {
-        setIsLoading(true);
-        let response;
-        // TODO: Update API to accept all wish stats in one call instead of making redundant calls per banner
-        if (isFiltered && bannerId) {
-          response = await getUserBannerStats(gameName, gameId, bannerId);
-        } else { 
-          response = await getCombinedUserWishStats(gameName, gameId);
+      calculatedStats = calculateCombinedStats(statsArr);
+    }
+
+    const currentStatsData = wishStats[gameName].map(stat => ({ ...stat }));
+    const wishCost = wishCostData[gameName];
+
+    for (const stat of currentStatsData) {
+      if (stat.type === 'regular') {
+        if (stat.label === 'Total Wishes') {
+          stat.value = calculatedStats.totalWishes;
+          stat.subtext = `${(wishCost.single * calculatedStats.totalWishes).toString()} ${wishCost.currency}`;
         }
-        
-        const calculatedStats = response.data;
-        const currentStatsData = wishStats[gameName].map(stat => ({ ...stat })); // clone to avoid mutation
-        const wishCost = wishCostData[gameName];
-
-        for (const stat of currentStatsData) {
-          if (stat.type === 'regular') {
-            if (stat.label === 'Total Wishes') {
-              stat.value = calculatedStats.totalWishes;
-              stat.subtext = `${(wishCost.single * calculatedStats.totalWishes).toString()} ${wishCost.currency}`;
-            }
-          } else if (stat.type === 'average') {
-            if (stat.label === 'Avg 5★ Pity') {
-              stat.value = calculatedStats.avgFiveStarPity;
-            } else if (stat.label === 'Avg 4★ Pity') {
-              stat.value = calculatedStats.avgFourStarPity;
-            }
-          } else if (stat.type === 'ratio') {
-            const [wins, losses, winRate] = calculatedStats.fiveStarWLRatio;
-            if (stat.label === '5★ Win Rate') {
-              stat.value = `${winRate.toString()}%`;
-              stat.subtext = `${wins.toString()} Wins / ${losses.toString()} Losses`;
-            }
-          } else {
-            if (stat.label === 'Current 5★ Win Streak') {
-              stat.value = calculatedStats.currentWinStreak;
-            } else if (stat.label === 'Current 5★ Loss Streak') {
-              stat.value = calculatedStats.currentLossStreak;
-            } else if (stat.label === 'Longest 5★ Win Streak') {
-              stat.value = calculatedStats.longestWinStreak;
-            } else if (stat.label === 'Longest 5★ Loss Streak') {
-              stat.value = calculatedStats.longestLossStreak;
-            }
-          }
+      } else if (stat.type === 'average') {
+        if (stat.label === 'Avg 5★ Pity') {
+          stat.value = calculatedStats.avgFiveStarPity;
+        } else if (stat.label === 'Avg 4★ Pity') {
+          stat.value = calculatedStats.avgFourStarPity;
         }
-        setStatistics(currentStatsData);
-      } catch (error) {
-        console.error('Error fetching wish statistics:', error);
-        setStatistics([]);
-      } finally {
-        setIsLoading(false);
+      } else if (stat.type === 'ratio') {
+        const [wins, losses, winRate] = calculatedStats.fiveStarWLRatio;
+        if (stat.label === '5★ Win Rate') {
+          stat.value = `${winRate.toString()}%`;
+          stat.subtext = `${wins.toString()} Wins / ${losses.toString()} Losses`;
+        }
+      } else {
+        if (stat.label === 'Current 5★ Win Streak') {
+          stat.value = calculatedStats.currentWinStreak;
+        } else if (stat.label === 'Current 5★ Loss Streak') {
+          stat.value = calculatedStats.currentLossStreak;
+        } else if (stat.label === 'Longest 5★ Win Streak') {
+          stat.value = calculatedStats.longestWinStreak;
+        } else if (stat.label === 'Longest 5★ Loss Streak') {
+          stat.value = calculatedStats.longestLossStreak;
+        }
       }
-    };
-
-    void fetchStats();
-  }, [gameId, gameName, bannerId, wishes, selectedBanner, isFiltered, externalLoading]);
+    }
+    setStatistics(currentStatsData);
+    setIsLoading(false);
+  }, [gameId, gameName, bannerIds, wishes, selectedBanner, isFiltered, externalLoading]);
 
   if (!isLoading) {
     if (!statistics) {

@@ -11,7 +11,6 @@ import WishHeader from "./WishHeader";
 import { useBannerFilter } from "../../../../hooks/useBannerFilter";
 import WishStatistics from "./WishStatistics";
 import { getUserPityStats, getUserWishes } from "../../../../api/wishService";
-// import { getBannerId, getGameIdByUGID } from "../../../../api/gameService";
 
 const WishTracker: React.FC<WishTrackerProps> = ({ gameName, userGameId }) => {
   const [wishes, setWishes] = useState<WishItem[]>([]);

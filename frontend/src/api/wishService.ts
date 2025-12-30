@@ -6,11 +6,6 @@ type UserWishesResponse = {
   data: WishItem[];
 }
 
-// type UserWishStatsResponse = { 
-//   success: boolean;
-//   data: WishStats;
-// }
-
 type UserPityStatsResponse = {
   success: boolean;
   data: PityCounters[];
@@ -30,17 +25,6 @@ export const getUserWishes = async (gameName: string, userGameId: string) => {
   const response = await axios.get<UserWishesResponse>(`/api/${gameName}/wishes/${userGameId}`);
   return response.data;
 };
-
-// export const getUserBannerStats = async (gameName: string, userGameId: string, bannerId: string) => {
-//   console.log("Fetching stats...");
-//   const response = await axios.get<UserWishStatsResponse>(`/api/${gameName}/wishes/${userGameId}/stats?bannerId=${bannerId}`);
-//   return response.data;
-// };
-
-// export const getCombinedUserWishStats = async (gameName: string, userGameId: string) => {
-//   const response = await axios.get<UserWishStatsResponse>(`/api/${gameName}/wishes/${userGameId}/stats`);
-//   return response.data;
-// };
 
 export const getUserPityStats = async (gameName: string, userGameId: string) => {
   const response = await axios.get<UserPityStatsResponse>(`/api/${gameName}/wishes/${userGameId}/pityStats`);

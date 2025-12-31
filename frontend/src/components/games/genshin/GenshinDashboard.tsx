@@ -38,8 +38,8 @@ const GenshinDashboard: React.FC<GenshinDashboardProps> = ({ game }) => {
 
   const tabs = [
     { id: 'wishes', label: 'Wish Tracker', available: true },
+    { id: 'achievements', label: 'Achievements', available: false },
     { id: 'characters', label: 'Characters', available: false },
-    { id: 'weapons', label: 'Weapons', available: false },
     { id: 'daily', label: 'Daily Commissions', available: false },
     { id: 'events', label: 'Events', available: false }
   ];

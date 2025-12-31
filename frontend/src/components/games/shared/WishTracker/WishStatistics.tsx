@@ -1,5 +1,5 @@
 import type React from "react";
-import type { WishStatsData, WishStatsProps } from "../../../../types";
+import type { WishStatsData, WishStatsProps, WishStatWithStreaks } from "../../../../types";
 import { useState, useEffect } from "react";
 import { wishCostData, wishStats } from "../../../../data/wishStats";
 import WishStatCard from "./WishStatCard";
@@ -63,8 +63,10 @@ const WishStatistics: React.FC<WishStatsProps> = ({
       calculatedStats = calculateCombinedStats(statsArr);
     }
 
-    const currentStatsData = wishStats[gameName].map(stat => ({ ...stat }));
+    let currentStatsData = wishStats[gameName].map(stat => ({ ...stat }));
     const wishCost = wishCostData[gameName];
+
+    
 
     for (const stat of currentStatsData) {
       if (stat.type === 'regular') {
@@ -84,17 +86,29 @@ const WishStatistics: React.FC<WishStatsProps> = ({
           stat.value = `${winRate.toString()}%`;
           stat.subtext = `${wins.toString()} Wins / ${losses.toString()} Losses`;
         }
-      } else {
+      } else if (isFiltered) {
         if (stat.label === 'Current 5★ Win Streak') {
-          stat.value = calculatedStats.currentWinStreak;
+          stat.value = (calculatedStats as WishStatWithStreaks).currentWinStreak;
         } else if (stat.label === 'Current 5★ Loss Streak') {
-          stat.value = calculatedStats.currentLossStreak;
+          stat.value = (calculatedStats as WishStatWithStreaks).currentLossStreak;
         } else if (stat.label === 'Longest 5★ Win Streak') {
-          stat.value = calculatedStats.longestWinStreak;
+          stat.value = (calculatedStats as WishStatWithStreaks).longestWinStreak;
         } else if (stat.label === 'Longest 5★ Loss Streak') {
-          stat.value = calculatedStats.longestLossStreak;
+          stat.value = (calculatedStats as WishStatWithStreaks).longestLossStreak;
         }
       }
+    }
+
+    /**
+     * NOTE (axmanalad): Some stats are only relevant when a banner is selected, but certain games may want to display
+     * streak stats even when not filtered. Future adjustments may be needed here per game. For now, this is the general logic.
+     */
+    // Remove streak stats if not filtered
+    currentStatsData = isFiltered ? currentStatsData :
+      currentStatsData.filter(stat => !stat.type.includes('streak'));
+    // Remove win rate stat
+    if (selectedBanner === 'Standard') {
+      currentStatsData = currentStatsData.filter(stat => stat.type !== 'ratio' && stat.type !== 'streak');
     }
     setStatistics(currentStatsData);
     setIsLoading(false);

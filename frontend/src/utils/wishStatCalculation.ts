@@ -1,4 +1,4 @@
-import type { WishStatLabels } from "../../../frontend/src/types";
+import type { WishStatLabels, WishStatWithStreaks } from "../../../frontend/src/types";
 import type { WishItem } from "../../../shared/types";
 
 /**
@@ -12,7 +12,7 @@ export function calculateWishStats<T extends WishItem>(
   wishes: T[], 
   fiveStarWishes: T[],
   fourStarWishes: T[]
-): WishStatLabels {
+): WishStatWithStreaks {
   const totalWishes = wishes.length;
 
   return {
@@ -35,10 +35,6 @@ export function calculateCombinedStats(statsArr: WishStatLabels[]): WishStatLabe
   let fiveStarWLRatio: [number, number, number] = [0, 0, 0];
   let avgFiveStarPity = 0;
   let avgFourStarPity = 0;
-  let currentWinStreak = 0;
-  let currentLossStreak = 0;
-  let longestWinStreak = 0;
-  let longestLossStreak = 0;
   let totalFiveStarPity = 0;
   let totalFourStarPity = 0;
   let totalFiveStarCount = 0;
@@ -46,10 +42,6 @@ export function calculateCombinedStats(statsArr: WishStatLabels[]): WishStatLabe
   for (const stat of statsArr) {
     totalWishes += stat.totalWishes;
     fiveStarWLRatio = fiveStarWLRatio.map((v, i) => v + stat.fiveStarWLRatio[i]) as [number, number, number];
-    longestWinStreak = Math.max(longestWinStreak, stat.longestWinStreak);
-    longestLossStreak = Math.max(longestLossStreak, stat.longestLossStreak);
-    currentWinStreak += stat.currentWinStreak;
-    currentLossStreak += stat.currentLossStreak;
     totalFiveStarPity += stat.avgFiveStarPity;
     totalFourStarPity += stat.avgFourStarPity;
     totalFiveStarCount += stat.fiveStarWLRatio[0] + stat.fiveStarWLRatio[1];
@@ -65,10 +57,6 @@ export function calculateCombinedStats(statsArr: WishStatLabels[]): WishStatLabe
     fiveStarWLRatio,
     avgFiveStarPity,
     avgFourStarPity,
-    currentWinStreak,
-    currentLossStreak,
-    longestWinStreak,
-    longestLossStreak,
   };
 }
 

@@ -21,8 +21,11 @@ const WishItem: React.FC<WishItemProps> = ({ wish, compact = false, gameName }) 
 
   const getWishIcon = (wish: WishItemProps['wish'], gameName: string | undefined): string => {
     const name = wish.name.replace(/ /g, '_');
-
-    const basePath = `${gameName?.toLowerCase()}/characters/icons/${encodeURIComponent(name)}_Icon.webp`;
+    let basePath = `${gameName?.toLowerCase()}`
+    if (wish.itemType === 'Character')
+      basePath += `/characters/icons/${encodeURIComponent(name)}_Icon.webp`;
+    else if (wish.itemType === 'Weapon')
+      basePath += `/weapons/icons/${wish.rarity}/Weapon_${encodeURIComponent(name)}.webp`;
 
     return `https://cdn.kapsulog.com/${basePath}`;
   };
@@ -39,9 +42,7 @@ const WishItem: React.FC<WishItemProps> = ({ wish, compact = false, gameName }) 
     <div className={`wish-item ${compact ? 'compact' : 'detailed'}`}>
       <div className="wish-item-info">
         <div className={`wish-item-rarity rarity-${String(wish.rarity)}`}></div>
-        {wish.itemType === 'Character' && (
-          <img src={getWishIcon(wish, gameName)} alt='' className="wish-item-image"/>
-        )}
+        <img src={getWishIcon(wish, gameName)} alt='' className="wish-item-image"/>
         <div className={"wish-details"}>
           <div className="flex flex-row gap-2 items-center">
             <div className="wish-item-name">{wish.name}</div>

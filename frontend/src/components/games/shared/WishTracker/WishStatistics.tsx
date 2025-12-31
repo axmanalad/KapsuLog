@@ -106,7 +106,7 @@ const WishStatistics: React.FC<WishStatsProps> = ({
     // Remove streak stats if not filtered
     currentStatsData = isFiltered ? currentStatsData :
       currentStatsData.filter(stat => !stat.type.includes('streak'));
-    // Remove win rate stat
+    // Remove win rate stat and streak stats for Standard banner
     if (selectedBanner === 'Standard') {
       currentStatsData = currentStatsData.filter(stat => stat.type !== 'ratio' && stat.type !== 'streak');
     }

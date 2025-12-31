@@ -7,7 +7,7 @@ export interface DropdownProps {
   className?: string;
 }
 
-export interface GenshinDashboardProps {
+export interface GameComponentProps {
   game: Game;
 }
 
@@ -15,10 +15,6 @@ export interface TabNavigationProps {
   tabs: Tab[];
   activeTab: string;
   onTabChange: (tabId: string) => void;
-}
-
-export interface GameHeaderProps {
-  game: Game;
 }
 
 export interface WishTrackerProps {

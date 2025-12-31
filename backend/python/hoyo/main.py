@@ -7,7 +7,7 @@ app = FastAPI()
 class StatsRequest(BaseModel):
     ltuid: str
     ltoken: str
-    uid: str
+    uid: int
 
 class GenshinUserStats:
     def __init__(self, data: StatsRequest):
@@ -16,15 +16,19 @@ class GenshinUserStats:
             "ltoken_v2": data.ltoken
         }
         self.uid = data.uid
+        try:
+            self.client = genshin.Client(self.cookies)
+        except genshin.GenshinException as e:
+            raise HTTPException(400, str(e))
+        except Exception as e:
+            raise HTTPException(500, str(e))
 
     @app.post("/api/genshin/stats")
     async def get_genshin_stats(self):
         try:
-            
-            client = genshin.Client(self.cookies)
 
-            user = await client.get_genshin_user(self.uid)
-            chars = await client.get_genshin_characters(self.uid)
+            user = await self.client.get_genshin_user(self.uid)
+            chars = await self.client.get_genshin_characters(self.uid)
 
             return {
                 "success": True,
@@ -41,15 +45,14 @@ class GenshinUserStats:
     @app.post("/api/genshin/rt-notes")
     async def get_real_time_notes(self):
         try:
-            client = genshin.Client(self.cookies)
-            notes = await client.get_genshin_notes(self.uid)
+            notes = await self.client.get_genshin_notes(self.uid)
 
             return {
                 "success": True,
                 "data": {
                     "current_resin": notes.current_resin,
                     "max_resin": notes.max_resin,
-                    "resin_recovery_time": notes.resin_recovery,
+                    "resin_recovery_time": notes.resin_recovery_time,
                     "completed_commissions": notes.completed_commissions,
                     "max_commissions": notes.max_commissions,
                     "remaining_resin_discounts": notes.remaining_resin_discounts,

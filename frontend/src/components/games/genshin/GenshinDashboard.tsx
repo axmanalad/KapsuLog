@@ -1,12 +1,12 @@
 import type React from "react";
 import { useEffect, useState } from "react";
-import type { GenshinDashboardProps } from "../../../types";
+import type { GameComponentProps } from "../../../types";
 import TabNavigation from "../shared/TabNavigation";
 import WishTracker from "../shared/WishTracker";
 import { useAuth } from "../../../hooks/useAuthContext";
 import { getUserGameId } from "../../../api/authService";
 
-const GenshinDashboard: React.FC<GenshinDashboardProps> = ({ game }) => {
+const GenshinDashboard: React.FC<GameComponentProps> = ({ game }) => {
   const [activeTab, setActiveTab] = useState('wishes');
   const [userGameId, setUserGameId] = useState<string>('');
   const [loading, setLoading] = useState(true);

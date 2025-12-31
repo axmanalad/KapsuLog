@@ -11,6 +11,8 @@ import AddGame from './pages/AddGame';
 import { AuthProvider } from './contexts/AuthProvider';
 import ProtectedRoute from './components/ProtectedRoute';
 import AuthRedirect from './components/AuthRedirect';
+import GameSettings from './pages/games/GameSettings';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -36,6 +38,11 @@ function App() {
               </AuthRedirect>
             } />
             {/* Protected */}
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            } />
             <Route path="/my-games" element={
               <ProtectedRoute>
                 <MyGames />
@@ -44,6 +51,11 @@ function App() {
             <Route path="/game/:gameTitle" element={
               <ProtectedRoute>
                 <GamePage />
+              </ProtectedRoute>
+            } />
+            <Route path="/game/:gameTitle/settings" element={
+              <ProtectedRoute>
+                <GameSettings />
               </ProtectedRoute>
             } />
             <Route path="/add-game" element={

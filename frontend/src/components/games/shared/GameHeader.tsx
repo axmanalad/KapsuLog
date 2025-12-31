@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import type { GameHeaderProps } from "../../../types";
+import type { GameComponentProps } from "../../../types";
 import "../../../styles/components/games/shared/game-header.css";
 import GameHeaderStatCard from "./GameHeaderStatCard";
 import { gameStats } from "../../../data/gameStats";
 
-const GameHeader: React.FC<GameHeaderProps> = ({ game }) => {
+const GameHeader: React.FC<GameComponentProps> = ({ game }) => {
   const gameId = game.id;
   const currentGameStats = gameStats[gameId];
   
@@ -36,7 +36,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({ game }) => {
           {game.isAvailable && (
             <div className="game-header-actions">
               <button type="button" className="game-header-btn">
-                ⚙️ Settings
+                <Link to='settings'>⚙️ Settings</Link>
               </button>
               <button type="button" className="game-header-btn primary">
                 🔄 Sync Data

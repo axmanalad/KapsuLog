@@ -1,3 +1,4 @@
+import type { GameAPIStats } from '../types';
 import axios from './axiosInstance';
 
 type GameIdResponse = {
@@ -39,6 +40,11 @@ type RemoveGameResponse = {
   message: string;
 }
 
+type GameStatsResponse = {
+  success: boolean;
+  data: GameAPIStats;
+}
+
 export const getGameIdByName = async (gameName: string) => {
   const response = await axios.get<GameIdResponse>(`/api/games/${gameName}/game-id-name`);
   return response.data.success ? response.data.data.gameId : null;
@@ -68,3 +74,13 @@ export const removeGameFromUser = async (userId: string, gameId: string) => {
   const response = await axios.delete<RemoveGameResponse>(`/api/games/user/${userId}/${gameId}`);
   return response.data;
 };
+
+export const fetchHoyoLabGameData = async (gameName: string, ltuid: number, ltokenv2: string, uid: number) => {
+  const params = {
+    ltuid: ltuid,
+    ltokenv2: ltokenv2,
+    uid: uid
+  }
+  const response = await axios.get<GameStatsResponse>(`/api/games/${gameName}/full-user-stats`, { params });
+  return response.data;
+}

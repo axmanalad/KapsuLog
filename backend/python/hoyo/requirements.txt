@@ -1,4 +1,3 @@
 fastapi[standard]
-uvicorn
 genshin>=1.7.0
-httpx
+slowapi

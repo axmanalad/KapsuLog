@@ -1,4 +1,5 @@
 import type { BaseAuthFormData, RegisterFormData, ValidationError } from "../../types/auth";
+import type { HoyoLabSettingsFormData } from "../../types/settings";
 
 export const validateRegisterForm = (formData: RegisterFormData): ValidationError[] => {
   const errors: ValidationError[] = [];
@@ -41,6 +42,33 @@ export const validateLoginForm = (formData: BaseAuthFormData): ValidationError[]
     errors.push({
       field: 'password',
       message: 'Password is required'
+    });
+  }
+
+  return errors;
+};
+
+export const validateHoyoLabSettingsForm = (formData: HoyoLabSettingsFormData): ValidationError[] => {
+  const errors: ValidationError[] = [];
+
+  if (!formData.ltuid_v2 || formData.ltuid_v2.length < 8) {
+    errors.push({
+      field: 'ltuid_v2',
+      message: 'LTUID_V2 must be at least 8 digits long'
+    });
+  }
+  
+  if (!formData.ltoken_v2.includes('v2_')) {
+    errors.push({
+      field: 'ltoken_v2',
+      message: 'LTOKEN_V2 must include "v2_"'
+    });
+  }
+
+  if (!formData.uid || formData.uid.length < 9) {
+    errors.push({
+      field: 'uid',
+      message: 'UID must be at least 9 digits long'
     });
   }
 

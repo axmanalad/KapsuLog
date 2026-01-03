@@ -1,8 +1,14 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/auth.service';
 import { PrismaClient } from '@prisma';
+import { PrismaPg } from '@prisma/adapter-pg'
+import { env } from '@prisma/config'
 
-const prisma = new PrismaClient();
+
+const adapter = new PrismaPg({
+  connectionString: env('DATABASE_URL')
+});
+const prisma = new PrismaClient({ adapter });
 
 export const login = async (req: Request, res: Response) => {
   try {

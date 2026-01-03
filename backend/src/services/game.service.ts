@@ -1,6 +1,12 @@
-import { PrismaClient } from '@prisma';
+import { Prisma, PrismaClient } from '@prisma';
+import { PrismaPg } from '@prisma/adapter-pg'
+import { env } from '@prisma/config'
 
-const prisma = new PrismaClient();
+
+const adapter = new PrismaPg({
+  connectionString: env('DATABASE_URL')
+});
+const prisma = new PrismaClient({ adapter });
 
 /**
  * Service for managing games.

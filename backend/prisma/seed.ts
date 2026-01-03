@@ -1,6 +1,12 @@
 import { PrismaClient } from '../generated/prisma';
+import { PrismaPg } from '@prisma/adapter-pg'
+import { env } from '@prisma/config'
 
-const prisma = new PrismaClient();
+
+const adapter = new PrismaPg({
+  connectionString: env('DATABASE_URL')
+});
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log('Seeding database...');

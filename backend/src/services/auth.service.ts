@@ -1,8 +1,14 @@
-import { PrismaClient } from '@prisma';
 import jwt from 'jsonwebtoken';
 // import bcrypt from 'bcrypt';
+import { PrismaClient } from '@prisma';
+import { PrismaPg } from '@prisma/adapter-pg'
+import { env } from '@prisma/config'
 
-const prisma = new PrismaClient();
+
+const adapter = new PrismaPg({
+  connectionString: env('DATABASE_URL')
+});
+const prisma = new PrismaClient({ adapter });
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
 export class AuthService {

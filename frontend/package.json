@@ -11,7 +11,7 @@
     "test": "echo 'No tests yet.' && exit 0"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.1.17",
+    "@tailwindcss/vite": "^4.2.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.9.6",

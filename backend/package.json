@@ -13,7 +13,7 @@
   "type": "commonjs",
   "dependencies": {
     "@prisma/adapter-pg": "^7.4.2",
-    "@prisma/client": "^7.2.0",
+    "@prisma/client": "^7.4.2",
     "@types/jsonwebtoken": "^9.0.10",
     "axios": "^1.13.5",
     "bcrypt": "^6.0.0",
